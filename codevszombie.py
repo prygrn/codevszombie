@@ -53,7 +53,11 @@ if __name__ == "__main__":
         # For each zombie : its UID, its current coordinates, its next coordinates
         for i in range(zombie_count):
             zombie_id, zombie_x, zombie_y, zombie_xnext, zombie_ynext = [int(j) for j in input().split()]
-            dzombies.setdefault(zombie_id, Person(PersonType.ZOMBIE, zombie_id, zombie_x, zombie_y))
+            # Only for the first round
+            if game_loop == 0:
+                dzombies.setdefault(zombie_id, Person(PersonType.ZOMBIE, zombie_id, zombie_x, zombie_y))
+            else:
+                dzombies[zombie_id] = Person(PersonType.ZOMBIE, zombie_id, zombie_x, zombie_y)
             dzombies.get(zombie_id).dbgPrint()
         
         # Your destination coordinates

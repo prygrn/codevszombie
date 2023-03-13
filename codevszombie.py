@@ -21,9 +21,7 @@ class Person:
         self.x = x
         self.y = y
     def getCoordinates(self):
-        return (self.x, self.y)
-    def getPrintableCoordinates(self):
-        return (f"{self.x} {self.y}")
+        return self.x, self.y
     def dbgPrint(self):
         dbg(f"{self.type} #{self.id} [{self.x},{self.y}]")
 
@@ -35,8 +33,8 @@ if __name__ == "__main__":
     # Game loop #
     #############
     while True:
-        dhumans = dict()
-        dzombies = dict()
+        dhumans = list()
+        dzombies = list()
         starting_time = time.perf_counter()
         # Ash's coordinates
         x, y = [int(i) for i in input().split()]
@@ -49,19 +47,20 @@ if __name__ == "__main__":
         # For each human : its UID and its coordinates
         for i in range(human_count):
             human_id, human_x, human_y = [int(j) for j in input().split()]
-            dhumans.setdefault(human_id, Person(PersonType.HUMAN, human_id, human_x, human_y))
-            dhumans.get(human_id).dbgPrint()
+            dhumans.insert(human_id, Person(PersonType.HUMAN, human_id, human_x, human_y))
+            dhumans[i].dbgPrint()
         # Number of 'alived' zombies
         zombie_count = int(input())
         dbg(f"Number of zombies = {zombie_count}")
         # For each zombie : its UID, its current coordinates, its next coordinates
         for i in range(zombie_count):
             zombie_id, zombie_x, zombie_y, zombie_xnext, zombie_ynext = [int(j) for j in input().split()]
-            dzombies.setdefault(zombie_id, Person(PersonType.ZOMBIE, zombie_id, zombie_x, zombie_y))
-            dzombies.get(zombie_id).dbgPrint()
+            # Only for the first round
+            dzombies.insert(zombie_id, Person(PersonType.ZOMBIE, zombie_id, zombie_x, zombie_y))
+            dzombies[i].dbgPrint()
         
-        # Your destination coordinates
-        print(dzombies.get(0).getPrintableCoordinates())
+        print(f"{dzombies[0].getCoordinates()[0]} {dzombies[0].getCoordinates()[1]}")
+        
         game_loop += 1
         delta = time.perf_counter() - starting_time
         dbg(f"Turn #{game_loop} ended in {delta * 1000} ms")

@@ -7,13 +7,12 @@ def dbg(m: str):
     print(f"[DBG] {m}", file=sys.stderr, flush=True)
 
 class PersonType(enum.Enum):
-    UNDEFINED = 0
     HUMAN = 1
     ZOMBIE = 2
     ASH = 3 # Because he's much more than a simple human
 
 class Person:
-    def __init__(self, ptype=PersonType.UNDEFINED, id=0, x=0, y=0) -> None:
+    def __init__(self, ptype: PersonType, id=0, x=0, y=0) -> None:
         self.type = ptype
         self.id = id
         self.x = x
@@ -21,19 +20,23 @@ class Person:
     def setCoordinates(self, x : int, y : int):
         self.x = x
         self.y = y
+    def getCoordinates(self):
+        return (self.x, self.y)
+    def getPrintableCoordinates(self):
+        return (f"{self.x} {self.y}")
     def dbgPrint(self):
         dbg(f"{self.type} #{self.id} [{self.x},{self.y}]")
 
 if __name__ == "__main__":
     game_loop = 0
-    dhumans = dict()
-    dzombies = dict()
     Ash = Person(PersonType.ASH)
 
     #############
     # Game loop #
     #############
     while True:
+        dhumans = dict()
+        dzombies = dict()
         starting_time = time.perf_counter()
         # Ash's coordinates
         x, y = [int(i) for i in input().split()]
@@ -50,18 +53,15 @@ if __name__ == "__main__":
             dhumans.get(human_id).dbgPrint()
         # Number of 'alived' zombies
         zombie_count = int(input())
+        dbg(f"Number of zombies = {zombie_count}")
         # For each zombie : its UID, its current coordinates, its next coordinates
         for i in range(zombie_count):
             zombie_id, zombie_x, zombie_y, zombie_xnext, zombie_ynext = [int(j) for j in input().split()]
-            # Only for the first round
-            if game_loop == 0:
-                dzombies.setdefault(zombie_id, Person(PersonType.ZOMBIE, zombie_id, zombie_x, zombie_y))
-            else:
-                dzombies[zombie_id] = Person(PersonType.ZOMBIE, zombie_id, zombie_x, zombie_y)
+            dzombies.setdefault(zombie_id, Person(PersonType.ZOMBIE, zombie_id, zombie_x, zombie_y))
             dzombies.get(zombie_id).dbgPrint()
         
         # Your destination coordinates
-        print("0 0")
+        print(dzombies.get(0).getPrintableCoordinates())
         game_loop += 1
         delta = time.perf_counter() - starting_time
         dbg(f"Turn #{game_loop} ended in {delta * 1000} ms")
